@@ -12,10 +12,10 @@ export default class App extends Component
     this.state=
     {
       userName : "Erdem",
-      toDoItems : [{action : "Buy a flower", done : false},
+      toDoItems : [{action : "Buy an iPhone", done : false},
                   {action : "Do Workout", done : true},
                   {action : "Study Programming", done : false},
-                  {action : "Call a friend", done : true}],
+                  {action : "Call gf", done : true}],
       newItemText : ""
     }
   }
@@ -39,7 +39,8 @@ export default class App extends Component
           // <Modal {...this.props} title='Modal heading'> would be same as:
           // <Modal a={this.props.a} b={this.props.b} title=''>
           
-            toDoItems : [ ...this.state.toDoItems, // all the previous values of to do items
+          // ... : all the previous values of to do items
+            toDoItems : [ ...this.state.toDoItems, 
                         { action : this.state.newItemText, 
                           done : false}],
                           newItemText : ""
@@ -47,6 +48,23 @@ export default class App extends Component
     }
   }  
  
+  // change note item status boolean wheter it is done or not
+  toggleTodo = (todo) => this.setState({ toDoItems : this.state.toDoItems
+                  .map(item => item.action === todo.action ? 
+                          { ...item, done: !item.done } : item )}
+                      );
+
+ // use map function to generate to do items for displaying
+  todoTableRows =() => this.state.toDoItems
+                  .map( item => 
+                    <tr key={item.action}>
+                      <td>{item.action}</td>
+                      <td><input type="checkbox" checked={item.done} 
+                              onChange={ () => this.toggleTodo(item)} />
+                      </td>
+                    </tr>
+                    );                      
+
   // render = () => {}  new style arrow function, below is old style:
   render()
   {
@@ -67,6 +85,19 @@ export default class App extends Component
                     Add a New Task
               </button>
         </div>
+
+        <table className="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>To Do Task Name</th>
+              <th>Is It Done</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.todoTableRows()}
+          </tbody>
+        </table>
+
       </div>
     </div>
     )
