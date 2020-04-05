@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
-import logo from './logo.svg';
 import './App.css';
-import { directive } from '@babel/types';
 
-
+// import the child components
+import { ToDoBanner} from "./ToDoBanner";
+import { ToDoRow} from "./ToDoRow";
+import { ToDoCreator} from "./ToDoCreator";
+  
 export default class App extends Component
 {
   constructor(props)
@@ -16,7 +18,7 @@ export default class App extends Component
                   {action : "Do Workout", done : true},
                   {action : "Study Programming", done : false},
                   {action : "Call gf", done : true}],
-      newItemText : ""
+      // newItemText : ""
     }
   }
 
@@ -27,10 +29,10 @@ export default class App extends Component
   }
 
   // add new to do task
-  createNewToDo=() =>
+  createNewToDo=(task) =>
   {
     if(!this.state.toDoItems
-              .find(item => item.action === this.state.newItemText))
+              .find(item => item.action === task))
     {
         this.setState({
           // ... is spread operator in ES6
@@ -41,9 +43,9 @@ export default class App extends Component
           
           // ... : all the previous values of to do items
             toDoItems : [ ...this.state.toDoItems, 
-                        { action : this.state.newItemText, 
-                          done : false}],
-                          newItemText : ""
+                        { action : task, 
+                          done : false}]
+                          //,newItemText : ""
         });
     }
   }  
@@ -55,14 +57,11 @@ export default class App extends Component
                       );
 
  // use map function to generate to do items for displaying
+ // add child component ToDoRow
   todoTableRows =() => this.state.toDoItems
                   .map( item => 
-                    <tr key={item.action}>
-                      <td>{item.action}</td>
-                      <td><input type="checkbox" checked={item.done} 
-                              onChange={ () => this.toggleTodo(item)} />
-                      </td>
-                    </tr>
+                        <ToDoRow key={item.action}  item={item}
+                            callback={this.toggleTodo} />
                     );                      
 
   // render = () => {}  new style arrow function, below is old style:
@@ -70,21 +69,11 @@ export default class App extends Component
   {
     return(
     <div>
-      <h4 className="bg-primary text-white text-center p-2">
-            { this.state.userName }'s  To Do List 
-            ({this.state.toDoItems.filter(t=> !t.done).length}) items remaining to do
-      </h4>
-      <div className="container-fluid">
-        <div className="m-1">
-          <input className="form-control" 
-              value = {this.newItemText}
-              onChange={this.updateNewItemTextValue} />
+      <ToDoBanner name={this.state.userName}
+                  tasks={this.state.toDoItems} />
 
-              <button className="btn btn-danger mt-1"
-                    onClick={this.createNewToDo}>
-                    Add a New Task
-              </button>
-        </div>
+      <div className="container-fluid">
+          <ToDoCreator callback={this.createNewToDo} />
 
         <table className="table table-striped table-bordered">
           <thead>
