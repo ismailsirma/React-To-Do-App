@@ -48,7 +48,13 @@ export default class App extends Component
                         { action : task, 
                           done : false}]
                           //,newItemText : ""
-        });
+                      },
+                      // adding localStorage to store values added by the user
+                      // so that values stored in browser for later access after page closed or navigation event
+                      () => localStorage.setItem("todos",
+                            JSON.stringify(this.state)
+                          )
+          );
     }
   }  
  
@@ -66,6 +72,24 @@ export default class App extends Component
                         <ToDoRow key={item.action}  item={item}
                             callback={this.toggleTodo} />
                     );                      
+
+// Load the data stored in local Storage (stored in browser with no expiration date, stays after closed)
+// componentDidMount is react fw method which is invoked immediately after a component is mounted
+//  Initialization that requires DOM nodes should go here.
+componentDidMount =() =>
+{
+  let data = localStorage.getItem("todos");
+  this.setState(data!=null ? JSON.parse(data) : 
+                  {
+                    userName : "Erdem",
+                    toDoItems : [{action : "Buy an iPhone", done : false},
+                                {action : "Do Workout", done : true},
+                                {action : "Study Programming", done : false},
+                                {action : "Call gf", done : true}],
+                                showCompleted : true         
+                  } 
+              );
+}
 
   // render = () => {}  new style arrow function, below is old style:
   render()
