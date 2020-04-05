@@ -5,7 +5,8 @@ import './App.css';
 import { ToDoBanner} from "./ToDoBanner";
 import { ToDoRow} from "./ToDoRow";
 import { ToDoCreator} from "./ToDoCreator";
-  
+import { VisibilityControl } from "./VisibilityControl";
+
 export default class App extends Component
 {
   constructor(props)
@@ -18,6 +19,7 @@ export default class App extends Component
                   {action : "Do Workout", done : true},
                   {action : "Study Programming", done : false},
                   {action : "Call gf", done : true}],
+                  showCompleted : true                  
       // newItemText : ""
     }
   }
@@ -58,7 +60,8 @@ export default class App extends Component
 
  // use map function to generate to do items for displaying
  // add child component ToDoRow
-  todoTableRows =() => this.state.toDoItems
+  todoTableRows =(isDone) => this.state.toDoItems
+                  .filter(item => item.done === isDone)
                   .map( item => 
                         <ToDoRow key={item.action}  item={item}
                             callback={this.toggleTodo} />
@@ -83,9 +86,36 @@ export default class App extends Component
             </tr>
           </thead>
           <tbody>
-            {this.todoTableRows()}
+            {/* Show incomplete tasks */}
+            {this.todoTableRows(false)}
           </tbody>
         </table>
+
+        <div className="bg-danger text-white text-center p-2">
+            {/* Calling Child Component */}
+            <VisibilityControl description="Completed Tasks"
+              isChecked={this.state.showCompleted}
+              callback={ (checked) =>
+                this.setState({showCompleted: checked})
+              } />
+        </div>
+
+        {
+            this.state.showCompleted && 
+            <table className="table table-striped table-bordered">
+                <thead>
+                  <tr>
+                    <td>Task Name</td>
+                    <td>Status</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* show completed tasks */}
+                  {this.todoTableRows(true)}
+                </tbody>
+            </table>
+
+        }
 
       </div>
     </div>
